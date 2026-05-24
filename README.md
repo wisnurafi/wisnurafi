@@ -58,7 +58,6 @@ public:
   <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=f5a97f" />
   <img src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" />
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/Assembly-525252?style=for-the-badge&logo=gnu&logoColor=white" />
 </p>
 
 #### Systems & Platforms
