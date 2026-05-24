@@ -30,7 +30,7 @@ public:
     std::string username  = "wisnurafi";
     std::vector<std::string> roles = {
         "Systems Software Engineer @ Beyondsoft Singapore (Remote)",
-        "Offensive Security Engineer (Project-based)"
+        "Offensive Security Engineer @ Confidential Company (Project-based)"
     };
     std::vector<std::string> languages = { "C", "C++", "C#", "Rust", "Python" };
     std::vector<std::string> tools     = { "Ghidra", "IDA Pro", "x64dbg", "WinDbg", "Wireshark" };
