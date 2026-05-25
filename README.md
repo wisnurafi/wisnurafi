@@ -6,7 +6,7 @@
 </a>
 
 <a href="https://github.com/wisnurafi">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=22&duration=2800&pause=900&color=58A6FF&center=true&vCenter=true&width=720&lines=Hey%2C+I'm+Wisnu+Rafi+%F0%9F%91%8B;Systems+Software+Engineer+%E2%80%A2+Beyondsoft+SG;Offensive+Security+Engineer+%E2%80%A2+Confidential+Company;C+%2F+C%2B%2B+%2F+C%23+%E2%80%A2+Windows+Internals+%E2%80%A2+RE" alt="typing" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=22&duration=2800&pause=900&color=58A6FF&center=true&vCenter=true&width=720&lines=Hey%2C+I'm+Wisnu+Rafi+%F0%9F%91%8B;Systems+Software+Engineer+;Offensive+Security+Engineer+;C+%2F+C%2B%2B+%2F+C%23+%E2%80%A2+Windows+Internals+%E2%80%A2+RE" alt="typing" />
 </a>
 
 <br/>
@@ -29,8 +29,8 @@ class WisnuRafi {
 public:
     std::string username  = "wisnurafi";
     std::vector<std::string> roles = {
-        "Systems Software Engineer @ Beyondsoft Singapore (Remote)",
-        "Offensive Security Engineer @ Confidential Company (Project-based)"
+        "Systems Software Engineer",
+        "Offensive Security Engineer"
     };
     std::vector<std::string> languages = { "C", "C++", "C#", "Rust", "Python" };
     std::vector<std::string> tools     = { "Ghidra", "IDA Pro", "x64dbg", "WinDbg", "Wireshark" };
