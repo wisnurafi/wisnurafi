@@ -44,7 +44,7 @@ public:
 - 🔬 &nbsp;Deep interest in **Windows Internals, Binary Analysis, and Game Security Research**
 - 💀 &nbsp;Think like an attacker to build more resilient systems
 - 🎯 &nbsp;Goal: master the full spectrum from **low-level architecture** to **offensive security**
-- 📍 &nbsp;Reach me via [`rafiprofile.my.id`](https://rafiprofile.my.id) or `wsnfii60@gmail.com`
+- 📍 &nbsp;Reach me via [`rafiprofile.my.id`](https://rafiprofile.my.id)
 
 ---
 
