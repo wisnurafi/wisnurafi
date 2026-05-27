@@ -194,7 +194,7 @@ public:
 
 <br/><br/>
 
-<img src="https://github-profile-trophy.vercel.app/?username=wisnurafi&theme=darkhub&no-frame=true&no-bg=true&row=1&column=7&margin-w=8" />
+<img src="https://github-trophies.vercel.app/?username=wisnurafi&theme=darkhub&no-frame=true&no-bg=true&row=1&column=7&margin-w=8" alt="trophies" />
 
 <br/><br/>
 
