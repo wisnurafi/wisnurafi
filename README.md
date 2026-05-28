@@ -98,7 +98,7 @@ public:
       <sub>Attack simulation & exploit analysis</sub>
     </td>
     <td align="center" width="33%">
-      <img src="https://img.icons8.com/fluency/48/binary-file.png" width="36"/><br/>
+      <img src="[https://img.icons8.com/fluency/48/binary-file.png](https://img.icons8.com/?size=100&id=Vo5c04YZtLkj&format=png&color=000000)" width="36"/><br/>
       <b>Reverse Engineering</b><br/>
       <sub>Binary & malware analysis</sub>
     </td>
