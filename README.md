@@ -45,12 +45,6 @@ My work lives close to the metal: **Windows internals**, **binary analysis**, **
   <img src="https://skillicons.dev/icons?i=c,cpp,cs,rust,python,ts,windows,linux,git,github,vscode&theme=dark&perline=11" alt="tech stack" />
 </p>
 
-**Languages** — `C` `C++` `C#` `Rust` `Python` `TypeScript`
-
-**Platforms** — `Windows` `Linux` `Win32 API` `.NET` `CMake`
-
-**Reverse engineering** — `Ghidra` `IDA Pro` `x64dbg` `WinDbg` `Wireshark` `Burp Suite`
-
 ### activity
 
 <picture>
