@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Custom 3D contribution tower: purple-dominant towers with tops colored
-by the week's dominant programming language.
+Custom 3D contribution tower: purple-dominant isometric skyline with
+language-colored tower tops, stats panel, dark backdrop.
 
 Public data only. No token needed.
 Usage: python3 scripts/gen-tower.py [--user wisnurafi] [--out profile-3d-contrib/tower-purple.svg]
@@ -20,9 +20,14 @@ REPOS = ["My-Kait", "universal-runtime-analyzer", "cs2-hax",
 REPO_LANG = {"My-Kait": "TypeScript", "universal-runtime-analyzer": "C++",
              "cs2-hax": "C++", "win-memory-cleaner": "C#",
              "win-files": "C#", "pvz-hax": "C++"}
-PURPLE_TOP = "#a78bfa"   # fallback when language unknown
-LEFT_FACE = "#4c1d95"
-RIGHT_FACE = "#6d28d9"
+MIXED_TOP = "#c4b5fd"
+
+# 5 quartile purple shades for tower sides (dark -> light)
+QUART = ["#2e1065", "#4c1d95", "#6d28d9", "#7c3aed", "#8b5cf6"]
+BOUNDS = [10, 25, 50, 75]  # commits/day thresholds
+
+SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+MONO = "ui-monospace, SFMono-Regular, Menlo, monospace"
 
 
 def get(url, timeout=25):
@@ -33,7 +38,6 @@ def get(url, timeout=25):
 
 
 def fetch_contributions(user):
-    """date -> count, from the public contributions calendar page."""
     html = get(f"https://github.com/users/{user}/contributions")
     tips = [t.strip() for t in re.findall(r'tool-tip[^>]*>\s*([^<]+?)\s*<', html) if t.strip()]
     months = {m: i + 1 for i, m in enumerate(
@@ -56,8 +60,7 @@ def fetch_contributions(user):
 
 
 def fetch_weekly_langs(user):
-    """week_start_date -> dominant language, from per-repo commit activity."""
-    weekly = {}  # date -> {lang: commits}
+    weekly = {}
     for repo in REPOS:
         try:
             data = json.loads(get(
@@ -83,86 +86,121 @@ def fetch_weekly_langs(user):
     return dom
 
 
-def render(daily, week_lang):
+def quartile(n):
+    for i, b in enumerate(BOUNDS):
+        if n < b:
+            return i
+    return 4
+
+
+def render(daily, week_lang, user):
     today = datetime.date.today()
+    total = sum(daily.values())
+    peak = max(daily.values()) if daily else 0
+    streak = 0
+    d = today
+    while daily.get(d, 0) > 0:
+        streak += 1
+        d -= datetime.timedelta(days=1)
+
     last_sunday = today - datetime.timedelta(days=(today.weekday() + 1) % 7)
     first_sunday = last_sunday - datetime.timedelta(weeks=52)
 
-    # cell data: (week_idx, day_idx, count, top_color)
     cells = []
     for i in range(53 * 7):
-        d = first_sunday + datetime.timedelta(days=i)
-        if d > today:
+        dt = first_sunday + datetime.timedelta(days=i)
+        if dt > today:
             continue
         w, dow = i // 7, i % 7
-        n = daily.get(d, 0)
-        ws = (d - datetime.timedelta(days=(d.weekday() + 1) % 7)).isoformat()
+        n = daily.get(dt, 0)
+        ws = (dt - datetime.timedelta(days=(dt.weekday() + 1) % 7)).isoformat()
         lang = week_lang.get(ws)
-        top = LANG_COLORS.get(lang, PURPLE_TOP) if n > 0 else None
+        top = LANG_COLORS.get(lang, MIXED_TOP) if n > 0 else None
         cells.append((w, dow, n, top))
 
-    # iso projection params
-    XW, YW, TOP = 13, 7.5, 5
+    # iso projection: weeks recede into the distance (compressed), days come forward
+    XW, YW, WK = 20, 9, 0.5
+    CX, CY = 770, 150
+    HS = 0.44  # cell half-size (chunky, small gaps)
+
     def h_of(n):
-        return 0 if n == 0 else TOP + math.sqrt(n) * 11
+        return 0 if n == 0 else 8 + math.sqrt(n) * 12.5
 
-    # bounds
-    xs = [(w - dow) * XW for w, dow, _, _ in cells]
-    max_h = max(h_of(n) for _, _, n, _ in cells)
-    min_x, max_x = min(xs) - 14, max(xs) + 14
-    max_y = max((w + dow) * YW for w, dow, _, _ in cells) + 30
-    min_y = -max_h - 40
-    W, H = max_x - min_x, max_y - min_y
-    OX, OY = -min_x, -min_y
+    def pt(w, dow, z, fx=0.0, fy=0.0):
+        return (CX + ((w + fx) * WK - (dow + fy)) * XW,
+                CY + ((w + fx) * WK + (dow + fy)) * YW - z)
 
-    def pt(w, dow, z):
-        return (OX + (w - dow) * XW, OY + (w + dow) * YW - z)
+    W, H = 1200, 520
+    P = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
+         f'viewBox="0 0 {W} {H}" role="img" aria-label="3d contribution tower">']
+    P.append('<defs>'
+             '<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">'
+             '<stop offset="0" stop-color="#231239"/><stop offset="1" stop-color="#0e0718"/>'
+             '</linearGradient>'
+             '<radialGradient id="glow" cx="0.65" cy="0.55" r="0.5">'
+             '<stop offset="0" stop-color="#7c3aed" stop-opacity="0.28"/>'
+             '<stop offset="1" stop-color="#7c3aed" stop-opacity="0"/>'
+             '</radialGradient>'
+             '</defs>')
+    P.append(f'<rect width="{W}" height="{H}" rx="18" fill="url(#bg)"/>')
+    P.append(f'<rect width="{W}" height="{H}" rx="18" fill="url(#glow)"/>')
 
-    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W:.0f}" height="{H:.0f}" '
-             f'viewBox="0 0 {W:.0f} {H:.0f}" role="img" aria-label="3d contribution tower">']
-    parts.append('<defs><linearGradient id="side" x1="0" y1="0" x2="0" y2="1">'
-                 f'<stop offset="0" stop-color="{RIGHT_FACE}"/><stop offset="1" stop-color="{LEFT_FACE}"/>'
-                 '</linearGradient></defs>')
+    # ---- left stats panel ----
+    x0 = 56
+    P.append(f'<text x="{x0}" y="72" font-family="{SANS}" font-size="30" font-weight="700" fill="#ffffff">Contribution skyline</text>')
+    P.append(f'<text x="{x0}" y="100" font-family="{MONO}" font-size="12" letter-spacing="3" fill="#a78bfa">{today.year} · RENDERED NIGHTLY</text>')
+    P.append(f'<line x1="{x0}" y1="124" x2="{x0+220}" y2="124" stroke="#3b2a5e" stroke-width="1"/>')
+    P.append(f'<text x="{x0}" y="156" font-family="{MONO}" font-size="10" letter-spacing="2" fill="#8b7bb8">COMMITS PER DAY</text>')
+    bx = x0
+    for i, c in enumerate(QUART):
+        P.append(f'<rect x="{bx}" y="168" width="30" height="14" rx="3" fill="{c}"/>')
+        bx += 36
+    P.append(f'<text x="{x0}" y="202" font-family="{MONO}" font-size="10" fill="#8b7bb8">under 10</text>')
+    P.append(f'<text x="{x0+144}" y="202" font-family="{MONO}" font-size="10" fill="#8b7bb8" text-anchor="end">75+</text>')
+    stats = [("TOTAL", f"{total:,}"), ("PEAK", str(peak)), ("STREAK", f"{streak}d")]
+    sx = x0
+    for label, val in stats:
+        P.append(f'<text x="{sx}" y="248" font-family="{MONO}" font-size="10" letter-spacing="2" fill="#8b7bb8">{label}</text>')
+        P.append(f'<text x="{sx}" y="276" font-family="{SANS}" font-size="24" font-weight="700" fill="#ffffff">{val}</text>')
+        sx += 96
+    # language legend
+    P.append(f'<text x="{x0}" y="326" font-family="{MONO}" font-size="10" letter-spacing="2" fill="#8b7bb8">TOWER TOPS · LANGUAGE</text>')
+    lx = x0
+    for label, col in [("mixed", MIXED_TOP), ("TypeScript", "#3178c6"), ("C++", "#f34b7d"), ("C#", "#178600")]:
+        P.append(f'<circle cx="{lx}" cy="348" r="6" fill="{col}"/>')
+        P.append(f'<text x="{lx+14}" y="352" font-family="{MONO}" font-size="11" fill="#b8a8e0">{label}</text>')
+        lx += 118 if label != "mixed" else 96
 
-    # ground shadow ellipse
-    parts.append(f'<ellipse cx="{W/2:.0f}" cy="{max_y - 14 + OY:.0f}" rx="{W*0.42:.0f}" ry="26" fill="#000" opacity="0.35"/>')
+    # ---- towers ----
+    # ground shadow
+    P.append(f'<ellipse cx="{CX}" cy="452" rx="330" ry="30" fill="#000" opacity="0.4"/>')
 
-    # painter's order: back (small w+dow) to front
-    for s in range(0, 60):
+    order = sorted(set(round(w * WK + dow, 2) for w, dow, _, _ in cells))
+    for s in order:
         for (w, dow, n, top) in cells:
-            if w + dow != s:
+            if round(w * WK + dow, 2) != s:
                 continue
             h = h_of(n)
-            # base diamond corners (z=0) and top (z=h)
-            ax, ay = pt(w - 0.5, dow - 0.5, 0)
-            bx, by = pt(w + 0.5, dow - 0.5, 0)
-            cx_, cy_ = pt(w + 0.5, dow + 0.5, 0)
-            dx, dy = pt(w - 0.5, dow + 0.5, 0)
+            c = [pt(w, dow, 0, -HS, -HS), pt(w, dow, 0, HS, -HS),
+                 pt(w, dow, 0, HS, HS), pt(w, dow, 0, -HS, HS)]
+            (ax, ay), (bx_, by_), (cx_, cy_), (dx, dy) = c
             if h > 0:
-                ax2, ay2 = pt(w - 0.5, dow - 0.5, h)
-                bx2, by2 = pt(w + 0.5, dow - 0.5, h)
-                cx2, cy2 = pt(w + 0.5, dow + 0.5, h)
-                dx2, dy2 = pt(w - 0.5, dow + 0.5, h)
-                # left face (dx,dy -> cx,cy)
-                parts.append(f'<polygon points="{dx:.1f},{dy:.1f} {cx_:.1f},{cy_:.1f} {cx2:.1f},{cy2:.1f} {dx2:.1f},{dy2:.1f}" fill="{LEFT_FACE}"/>')
-                # right face (bx,by -> cx,cy)
-                parts.append(f'<polygon points="{bx:.1f},{by:.1f} {cx_:.1f},{cy_:.1f} {cx2:.1f},{cy2:.1f} {bx2:.1f},{by2:.1f}" fill="url(#side)"/>')
-                # top face: language color
-                parts.append(f'<polygon points="{ax2:.1f},{ay2:.1f} {bx2:.1f},{by2:.1f} {cx2:.1f},{cy2:.1f} {dx2:.1f},{dy2:.1f}" fill="{top}" stroke="#ffffff" stroke-opacity="0.25" stroke-width="0.8"/>')
+                q = QUART[quartile(n)]
+                t = [pt(w, dow, h, -HS, -HS), pt(w, dow, h, HS, -HS),
+                     pt(w, dow, h, HS, HS), pt(w, dow, h, -HS, HS)]
+                (ax2, ay2), (bx2, by2), (cx2, cy2), (dx2, dy2) = t
+                # left face (darker)
+                P.append(f'<polygon points="{dx:.1f},{dy:.1f} {cx_:.1f},{cy_:.1f} {cx2:.1f},{cy2:.1f} {dx2:.1f},{dy2:.1f}" fill="#1e0a3c"/>')
+                # right face (quartile purple)
+                P.append(f'<polygon points="{bx_:.1f},{by_:.1f} {cx_:.1f},{cy_:.1f} {cx2:.1f},{cy2:.1f} {bx2:.1f},{by2:.1f}" fill="{q}"/>')
+                # top face (language color)
+                P.append(f'<polygon points="{ax2:.1f},{ay2:.1f} {bx2:.1f},{by2:.1f} {cx2:.1f},{cy2:.1f} {dx2:.1f},{dy2:.1f}" fill="{top}" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>')
             else:
-                parts.append(f'<polygon points="{ax:.1f},{ay:.1f} {bx:.1f},{by:.1f} {cx_:.1f},{cy_:.1f} {dx:.1f},{dy:.1f}" fill="#1a1030" stroke="#ffffff" stroke-opacity="0.05"/>')
+                P.append(f'<polygon points="{ax:.1f},{ay:.1f} {bx_:.1f},{by_:.1f} {cx_:.1f},{cy_:.1f} {dx:.1f},{dy:.1f}" fill="#1a0f2e" stroke="#ffffff" stroke-opacity="0.04"/>')
 
-    # legend
-    lx, ly = 24, H - 34
-    parts.append(f'<g font-family="monospace" font-size="12" fill="#8b949e">')
-    parts.append(f'<circle cx="{lx}" cy="{ly}" r="5" fill="{PURPLE_TOP}"/><text x="{lx+12}" y="{ly+4}">mixed</text>')
-    x = lx + 90
-    for lang, col in [("TypeScript", "#3178c6"), ("C++", "#f34b7d"), ("C#", "#178600")]:
-        parts.append(f'<circle cx="{x}" cy="{ly}" r="5" fill="{col}"/><text x="{x+12}" y="{ly+4}">{lang}</text>')
-        x += 110
-    parts.append('</g>')
-    parts.append('</svg>')
-    return "\n".join(parts)
+    P.append(f'<text x="{W-40}" y="{H-24}" font-family="{MONO}" font-size="10" letter-spacing="2" fill="#5b4a7a" text-anchor="end">rendered nightly · {user}</text>')
+    P.append('</svg>')
+    return "\n".join(P), dict(total=total, peak=peak, streak=streak)
 
 
 def main():
@@ -176,9 +214,10 @@ def main():
     print("fetching weekly languages…")
     week_lang = fetch_weekly_langs(a.user)
     print(f"{len(week_lang)} weeks with language data")
-    svg = render(daily, week_lang)
+    svg, stats = render(daily, week_lang, a.user)
     with open(a.out, "w") as f:
         f.write(svg)
+    print("stats:", stats)
     print("wrote", a.out, f"({len(svg)//1024} KB)")
 
 
