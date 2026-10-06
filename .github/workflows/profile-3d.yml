@@ -8,10 +8,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: generate 3d contribution svg
+    name: generate custom 3d tower
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: yoshi389111/github-profile-3d-contrib@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USERNAME: wisnurafi
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: generate tower svg
+        run: python3 scripts/gen-tower.py --out profile-3d-contrib/tower-purple.svg
+      - name: commit & push
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add profile-3d-contrib/tower-purple.svg
+          git diff --staged --quiet || git commit -m "generate custom 3d tower" && git push
