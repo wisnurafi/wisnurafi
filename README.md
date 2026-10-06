@@ -41,6 +41,10 @@ My work lives close to the metal: **Windows internals**, **binary analysis**, **
 
 ### stack
 
+<p>
+  <img src="https://skillicons.dev/icons?i=c,cpp,cs,rust,python,ts,windows,linux,git,github,vscode&theme=dark&perline=11" alt="tech stack" />
+</p>
+
 **Languages** — `C` `C++` `C#` `Rust` `Python` `TypeScript`
 
 **Platforms** — `Windows` `Linux` `Win32 API` `.NET` `CMake`
@@ -50,9 +54,9 @@ My work lives close to the metal: **Windows internals**, **binary analysis**, **
 ### activity
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./profile-3d-contrib/profile-night-rainbow.svg" />
-  <source media="(prefers-color-scheme: light)" srcset="./profile-3d-contrib/profile-season.svg" />
-  <img alt="3d contribution graph" src="./profile-3d-contrib/profile-night-rainbow.svg" width="100%" />
+  <source media="(prefers-color-scheme: dark)" srcset="./profile-3d-contrib/tower-purple.svg" />
+  <source media="(prefers-color-scheme: light)" srcset="./profile-3d-contrib/tower-purple.svg" />
+  <img alt="3d contribution tower — purple, tops colored by language" src="./profile-3d-contrib/tower-purple.svg" width="100%" />
 </picture>
 
 <picture>
@@ -63,4 +67,4 @@ My work lives close to the metal: **Windows internals**, **binary analysis**, **
 
 ### contact
 
-[rafiprofile.my.id](https://rafiprofile.my.id) · [w6nfii60@gmail.com](mailto:w6nfii60@gmail.com)
+🌐 [rafiprofile.my.id](https://rafiprofile.my.id) · ✉️ [w6nfii60@gmail.com](mailto:w6nfii60@gmail.com)
