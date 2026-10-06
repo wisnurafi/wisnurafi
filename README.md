@@ -1,4 +1,10 @@
 <p align="center">
+  <a href="https://rafiprofile.my.id">
+    <img alt="wisnu — operation tree" width="880" src="assets/promo/wisnu-terminal.gif" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://rafiprofile.my.id"><img alt="Portfolio" src="https://img.shields.io/badge/rafiprofile.my.id-0d0e12?style=flat-square&logo=googlechrome&logoColor=8b95f0" /></a>
   <a href="mailto:w6nfii60@gmail.com"><img alt="Email" src="https://img.shields.io/badge/Email-0d0e12?style=flat-square&logo=gmail&logoColor=8b95f0" /></a>
 </p>
