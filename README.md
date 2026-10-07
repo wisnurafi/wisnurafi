@@ -11,7 +11,7 @@
 
 ### Hi, I'm Wisnu Rafi
 
-I'm a systems software engineer and **Security Engineer** at **Beyondsoft Singapore**. I build low-level systems where there's nothing underneath to catch a mistake then I attack them to make sure they hold up when a real attacker shows up.
+I'm a **Systems Software Engineer** and **Security Engineer** at **Beyondsoft Singapore**. I build low-level systems where there's nothing underneath to catch a mistake then I attack them to make sure they hold up when a real attacker shows up.
 
 I'm the kind of engineer who gets curious when something only breaks for one user, on one machine, at the worst possible time. I like messy problems because they force the real story out of the system.
 
